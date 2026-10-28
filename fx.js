@@ -90,7 +90,7 @@
 
   /* 4. Count-up on "15+" */
   const stat = document.querySelector(".hero-proof strong");
-  if (stat && /^\d+\+?$/.test(stat.textContent.trim())) {
+  if (stat && !reduce && /^\d+\+?$/.test(stat.textContent.trim())) {
     const target = parseInt(stat.textContent, 10), plus = stat.textContent.includes("+") ? "+" : "";
     let n = 0;
     const step = () => { n += 1; stat.textContent = n + plus; if (n < target) setTimeout(step, 70); };
@@ -120,4 +120,18 @@
       requestAnimationFrame(frame);
     })(last);
   }
+})();
+
+/* 7. Lightbox shows each photo's real caption (instead of "Speaking moment NN") */
+(function () {
+  const img = document.getElementById("lightboxImage");
+  const cap = document.getElementById("lightboxCaption");
+  const counter = document.getElementById("galleryCounter");
+  const cards = [...document.querySelectorAll("[data-gallery-item]")];
+  if (!img || !cap || !counter) return;
+  new MutationObserver(() => {
+    const n = parseInt(counter.textContent, 10) - 1;
+    const fc = cards[n] && cards[n].querySelector("figcaption");
+    if (fc) cap.textContent = fc.textContent;
+  }).observe(counter, { childList: true, characterData: true, subtree: true });
 })();
